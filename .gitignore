@@ -1,0 +1,57 @@
+# 乐秀平台本地 Git 仓库规则
+# 只跟踪代码、配置模板、测试源码和文档；生产数据与本机运行产物永不入库。
+
+# 生产数据、附件与数据库
+/data/
+**/data/
+**/uploads/
+*.db
+*.sqlite
+*.sqlite3
+
+# 密钥、证书和初始密码
+*.key
+*.pem
+**/初始密码.txt
+
+# 本机环境与 Python 运行缓存
+.venv/
+.workbuddy/
+__pycache__/
+**/__pycache__/
+*.py[cod]
+*.log
+*.pid
+*.tmp
+
+# 发布包、旧目录和本机临时关联目录
+/发布包/
+/关联项目/
+/_d.jpg
+/_停用脚本_可删除/
+
+# Temp 目录默认只保留明确列出的维护脚本与测试源码。
+/Temp/*
+!/Temp/deploy.py
+!/Temp/safe_test_entry.py
+!/Temp/unlock_login.py
+!/Temp/backup_server_data.py
+!/Temp/pull_weekly_backup.py
+!/Temp/ssh_util.py
+!/Temp/rectification_20261006/
+/Temp/rectification_20261006/*
+!/Temp/rectification_20261006/*.py
+!/Temp/rectification_20261006/*.md
+!/Temp/rectification_20261006/*.template
+!/Temp/optimization_20261006/
+/Temp/optimization_20261006/*
+!/Temp/optimization_20261006/*.py
+!/Temp/fire_photo_book_20261007/
+/Temp/fire_photo_book_20261007/*
+!/Temp/fire_photo_book_20261007/*.py
+!/Temp/fire_photo_book_20261007/*.md
+!/Temp/fire_photo_book_20261007/*.template
+!/Temp/product_optimization_20261011/
+/Temp/product_optimization_20261011/*
+!/Temp/product_optimization_20261011/*.py
+!/Temp/product_optimization_20261011/*.md

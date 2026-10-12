@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>乐秀内部管理平台</title>
+<link rel="icon" href="/static/favicon.ico?v={{ v }}">
+<link rel="stylesheet" href="/static/style.css?v={{ v }}">
+</head>
+<body class="app theme-ledger">
+
+<div class="shell">
+
+<div class="topbar">
+  <div class="top-brand"><span class="lexiu-logo white sb-logo" role="img" aria-label="L'OK SHOW 乐秀"></span><span>门店内部管理平台</span></div>
+  <div class="breadcrumbs" aria-live="polite"><strong id="crumbNow">工作台</strong></div>
+  <div id="pageAnnouncer" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></div>
+  <div class="top-actions">
+    {% if show_preview %}<a class="btn ghost" href="/preview">手机预览</a>{% endif %}
+    <span class="user-pill"><span class="user-avatar" id="meAvatar">乐</span><span id="meName"></span></span>
+    <button class="btn ghost" type="button" onclick="changePassword()">修改密码</button>
+    <button id="logoutBtn" class="btn ghost">退出</button>
+  </div>
+</div>
+
+<!-- 模块导航：桌面横排，手机位于内容之后 -->
+<div class="sidebar">
+  <nav class="sb-nav" aria-label="主要导航">
+    <button class="sb-item" data-nav="dashboard" onclick="go('dashboard')"><span class="sb-ico">台</span><span>工作台</span></button>
+    <button class="sb-item" data-nav="company" onclick="go('company')"><span class="sb-ico">证</span><span>企业证照</span></button>
+    <button class="sb-item" data-nav="employee" onclick="go('employee')"><span class="sb-ico">健</span><span>员工健康证</span></button>
+    <button class="sb-item" data-nav="assets" onclick="go('assets')"><span class="sb-ico">资</span><span>固定资产</span></button>
+    <a class="sb-item" href="/fire"><span class="sb-ico">消</span><span>消防档案</span></a>
+    <button class="sb-item admin-only hidden" data-nav="review" onclick="go('review')"><span class="sb-ico">审</span><span>审核中心<i class="sb-dot" id="navReviewDot" hidden></i></span></button>
+    <button class="sb-item" data-nav="inventory" onclick="go('inventory')"><span class="sb-ico">仓</span><span>仓库管理</span></button>
+    <button class="sb-item admin-only hidden" data-nav="drinks" onclick="go('drinks')"><span class="sb-ico">酒</span><span>酒水单</span></button>
+    <button class="sb-item admin-only hidden" data-nav="settings" onclick="go('settings')"><span class="sb-ico">设</span><span>系统设置</span></button>
+  </nav>
+</div>
+
+<div class="main">
+
+<!-- ========== 一级：工作台 ========== -->
+  <section id="view-dashboard" class="ledger-site-home">
+  <div class="hero">
+    <div>
+      <span class="hero-kicker">门店工作台</span>
+      <h1>门店今日一览</h1>
+      <p class="ws-sub" id="heroSub">正在加载…</p>
+    </div>
+    <button class="hero-action" type="button" hidden onclick="showCertForm()"><span aria-hidden="true">＋</span> 新建资料</button>
+  </div>
+
+  <section class="stats-grid dashboard-secondary ledger-counts">
+    <article class="stat-card" role="button" tabindex="0" aria-label="打开企业证照" onclick="go('company')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();go('company')}">
+      <span class="stat-icon">证</span>
+      <span class="sc-text"><strong class="stat-value" id="cnt-company">—</strong><span class="stat-label">企业证照</span></span>
+      <span class="stat-arrow">›</span>
+    </article>
+    <article class="stat-card" role="button" tabindex="0" aria-label="打开员工健康证" onclick="go('employee')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();go('employee')}">
+      <span class="stat-icon">健</span>
+      <span class="sc-text"><strong class="stat-value" id="cnt-employee">—</strong><span class="stat-label">员工健康证</span></span>
+      <span class="stat-arrow">›</span>
+    </article>
+    <article class="stat-card" role="button" tabindex="0" aria-label="打开固定资产" onclick="go('assets')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();go('assets')}">
+      <span class="stat-icon">资</span>
+      <span class="sc-text"><strong class="stat-value" id="cnt-assets">—</strong><span class="stat-label">固定资产</span></span>
+      <span class="stat-arrow">›</span>
+    </article>
+    <article class="stat-card" role="button" tabindex="0" aria-label="打开仓库管理" onclick="go('inventory')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();go('inventory')}">
+      <span class="stat-icon">仓</span>
+      <span class="sc-text"><strong class="stat-value" id="cnt-inventory">—</strong><span class="stat-label">库存品项</span></span>
+      <span class="stat-arrow">›</span>
+    </article>
+  </section>
+
+  <!-- 审核入口：管理员常驻显示（没有待审时给个说明，别整块消失） -->
+  <section class="panel admin-only" id="reviewBox" hidden>
+    <div class="section-heading"><h2>审核中心</h2><span id="reviewSum"></span></div>
+    <div id="reviewBoxList" class="cert-grid"></div>
+    <div style="margin-top:10px">
+      <button class="btn" type="button" onclick="go('review')">打开审核中心</button>
+    </div>
+  </section>
+
+  <section class="ledger-quick-actions" aria-label="快捷操作">
+    <button class="ledger-quick-card tone-primary" type="button" onclick="showCertForm()"><strong>新增资料</strong><small>补充证照或健康证</small><span>＋</span></button>
+    <button class="ledger-quick-card" type="button" onclick="go('company')"><strong>查看资料</strong><small>进入企业证照台账</small><span>›</span></button>
+    <button class="ledger-quick-card" type="button" onclick="openReminderInventory()"><strong>库存预警</strong><small>查看需要处理的物品</small><span>›</span></button>
+  </section>
+
+  <div class="section-heading module-heading dashboard-secondary ledger-module-heading"><h2>快速进入</h2><span>按工作内容查找</span></div>
+  <section class="module-grid dashboard-secondary ledger-module-groups" id="ledgerModuleGroups">
+    <div class="ledger-module-group">
+      <div class="ledger-module-group-heading"><strong>资料模块</strong><span>资料与合规</span></div>
+      <div class="ledger-module-group-list">
+        <button class="mod-card" data-mod="company" data-nav="company"><div class="module-top"><span class="mod-ico">证</span><span class="mod-go">›</span></div><div class="mod-body"><div class="mod-name">企业证照</div><div class="mod-sub">登记、更新与附件归档</div></div></button>
+        <button class="mod-card" data-mod="employee" data-nav="employee"><div class="module-top"><span class="mod-ico">健</span><span class="mod-go">›</span></div><div class="mod-body"><div class="mod-name">员工健康证</div><div class="mod-sub">姓名、有效期与照片</div></div></button>
+        <a class="mod-card" data-mod="fire" href="/fire"><div class="module-top"><span class="mod-ico">消</span><span class="mod-go">›</span></div><div class="mod-body"><div class="mod-name">消防档案</div><div class="mod-sub">固定目录与照片册</div></div></a>
+      </div>
+    </div>
+    <div class="ledger-module-group">
+      <div class="ledger-module-group-heading"><strong>物资模块</strong><span>库存与领用</span></div>
+      <div class="ledger-module-group-list">
+        <button class="mod-card" data-mod="assets" data-nav="assets"><div class="module-top"><span class="mod-ico">资</span><span class="mod-go">›</span></div><div class="mod-body"><div class="mod-name">固定资产</div><div class="mod-sub">资产登记与领用归还</div></div></button>
+        <button class="mod-card" data-mod="inventory" data-nav="inventory"><div class="module-top"><span class="mod-ico">仓</span><span class="mod-go">›</span></div><div class="mod-body"><div class="mod-name">仓库管理</div><div class="mod-sub">采购、消耗与盘点登记</div></div></button>
+      </div>
+    </div>
+    <div class="ledger-module-group admin-only hidden">
+      <div class="ledger-module-group-heading"><strong>协作模块</strong><span>管理员可见</span></div>
+      <div class="ledger-module-group-list">
+        <button class="mod-card admin-only hidden" data-mod="review" data-nav="review"><div class="module-top"><span class="mod-ico">审</span><span class="mod-go">›</span></div><div class="mod-body"><div class="mod-name">审核中心</div><div class="mod-sub">逐项处理资料与附件</div></div></button>
+        <button class="mod-card admin-only hidden" data-mod="drinks" data-nav="drinks"><div class="module-top"><span class="mod-ico">酒</span><span class="mod-go">›</span></div><div class="mod-body"><div class="mod-name">酒水单</div><div class="mod-sub">整页图片与公开说明</div></div></button>
+        <button class="mod-card admin-only hidden" data-mod="settings" data-nav="settings"><div class="module-top"><span class="mod-ico">设</span><span class="mod-go">›</span></div><div class="mod-body"><div class="mod-name">系统设置</div><div class="mod-sub">账号管理与台账下载</div></div></button>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-heading" style="display:none"><h2>到期概览</h2></div>
+  <div id="cards" class="cards dashboard-secondary ledger-status-panel"></div>
+
+  <section class="notice-grid ledger-attention-stack">
+    <article class="notice-card notice-card-summary" role="button" tabindex="0" aria-label="打开证照到期提醒"
+             onclick="openReminderCertificates()"
+             onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openReminderCertificates()}">
+      <div class="nc-head"><h3>证照到期提醒</h3><span class="sec-more">查看提醒 ›</span></div>
+      <div class="notice-summary">
+        <div class="notice-metric"><span>已过期</span><strong id="reminder-cert-expired">—</strong></div>
+        <div class="notice-metric"><span>15 天内到期</span><strong id="reminder-cert-warn">—</strong></div>
+      </div>
+      <p id="reminder-cert-empty" class="notice-empty" hidden>暂无证照到期提醒</p>
+    </article>
+    <article class="notice-card notice-card-summary" role="button" tabindex="0" aria-label="打开库存预警"
+             onclick="openReminderInventory()"
+             onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openReminderInventory()}">
+      <div class="nc-head"><h3>库存预警</h3><span class="sec-more">查看提醒 ›</span></div>
+      <div class="notice-summary notice-summary-three">
+        <div class="notice-metric"><span>已过期</span><strong id="reminder-inventory-expired">—</strong></div>
+        <div class="notice-metric"><span>15 天内到期</span><strong id="reminder-inventory-warn">—</strong></div>
+        <div class="notice-metric"><span>库存不足</span><strong id="reminder-inventory-low">—</strong></div>
+      </div>
+      <p id="reminder-inventory-empty" class="notice-empty" hidden>暂无库存预警</p>
+    </article>
+  </section>
+</section>
+
+  <!-- ========== 提醒明细：从工作台提醒栏进入 ========== -->
+  <section id="view-reminders" class="hidden subview reminder-view">
+    <div class="subbar">
+      <button class="btn ghost" onclick="go('dashboard')">← 工作台</button>
+      <div class="subbar-title" id="reminderTitle" tabindex="-1">提醒明细</div>
+      <div class="subbar-en">REMINDERS</div>
+    </div>
+    <div class="reminder-toolbar">
+      <p class="hint" id="reminderHint">只显示需要处理的项目。</p>
+      <button class="btn" type="button" id="reminderAllBtn">查看全部</button>
+    </div>
+    <div id="reminderDetailList" class="panel reminder-detail-list"></div>
+  </section>
+
+  <!-- ========== 手机应用分组：业务模块统一入口 ========== -->
+  <section id="view-apps" class="hidden subview app-hub-view">
+    <div class="subbar">
+      <div class="subbar-title">应用</div>
+      <div class="subbar-en">ALL MODULES</div>
+    </div>
+    <p class="hint">按工作域查找现有功能。仓库内的采购、出库、盘点和预警继续归在仓库管理中。</p>
+
+    <section class="app-group">
+      <button class="app-group-heading app-accordion-trigger" type="button" aria-expanded="false" aria-controls="app-panel-records">
+        <span class="app-group-heading-copy"><span class="app-group-heading-title" role="heading" aria-level="2">档案管理</span><span class="app-group-heading-subtitle">资料与合规</span></span>
+        <span class="app-accordion-chevron" aria-hidden="true">⌄</span>
+      </button>
+      <div id="app-panel-records" class="app-module-grid app-accordion-panel" hidden>
+        <button class="app-module-card" type="button" onclick="go('company')"><span class="app-module-icon">证</span><span class="app-module-copy"><strong>企业证照</strong><small>营业执照、许可和附件</small></span><span class="app-module-arrow">›</span></button>
+        <button class="app-module-card" type="button" onclick="go('employee')"><span class="app-module-icon">健</span><span class="app-module-copy"><strong>员工健康证</strong><small>员工档案与到期提醒</small></span><span class="app-module-arrow">›</span></button>
+        <a class="app-module-card" href="/fire"><span class="app-module-icon">消</span><span class="app-module-copy"><strong>消防档案</strong><small>A01–A18、B01–B22 照片册</small></span><span class="app-module-arrow">›</span></a>
+      </div>
+    </section>
+
+    <section class="app-group">
+      <button class="app-group-heading app-accordion-trigger" type="button" aria-expanded="false" aria-controls="app-panel-supplies">
+        <span class="app-group-heading-copy"><span class="app-group-heading-title" role="heading" aria-level="2">物资管理</span><span class="app-group-heading-subtitle">库存与领用</span></span>
+        <span class="app-accordion-chevron" aria-hidden="true">⌄</span>
+      </button>
+      <div id="app-panel-supplies" class="app-module-grid app-accordion-panel" hidden>
+        <button class="app-module-card" type="button" onclick="go('inventory')"><span class="app-module-icon">仓</span><span class="app-module-copy"><strong>仓库管理</strong><small>库存、预警、采购、出库、盘点</small></span><span class="app-module-arrow">›</span></button>
+        <button class="app-module-card" type="button" onclick="go('assets')"><span class="app-module-icon">资</span><span class="app-module-copy"><strong>固定资产</strong><small>资产台账、领用与归还</small></span><span class="app-module-arrow">›</span></button>
+      </div>
+    </section>
+
+    <section class="app-group admin-only hidden">
+      <button class="app-group-heading app-accordion-trigger" type="button" aria-expanded="false" aria-controls="app-panel-admin">
+        <span class="app-group-heading-copy"><span class="app-group-heading-title" role="heading" aria-level="2">后台管理</span><span class="app-group-heading-subtitle">管理员可见</span></span>
+        <span class="app-accordion-chevron" aria-hidden="true">⌄</span>
+      </button>
+      <div id="app-panel-admin" class="app-module-grid app-accordion-panel" hidden>
+        <button class="app-module-card" type="button" onclick="go('review')"><span class="app-module-icon">审</span><span class="app-module-copy"><strong>审核中心</strong><small>资料、附件和申请审核</small></span><span class="app-module-arrow">›</span></button>
+        <button class="app-module-card" type="button" onclick="go('drinks')"><span class="app-module-icon">酒</span><span class="app-module-copy"><strong>酒水单</strong><small>公开酒水单页面维护</small></span><span class="app-module-arrow">›</span></button>
+        <button class="app-module-card" type="button" onclick="go('settings')"><span class="app-module-icon">设</span><span class="app-module-copy"><strong>系统设置</strong><small>账号、密码和台账下载</small></span><span class="app-module-arrow">›</span></button>
+      </div>
+    </section>
+  </section>
+
+  <!-- ========== 手机我的：个人与管理员工具 ========== -->
+  <section id="view-me" class="hidden subview me-view">
+    <div class="subbar">
+      <div class="subbar-title">我的</div>
+      <div class="subbar-en">ACCOUNT &amp; TOOLS</div>
+    </div>
+    <section class="me-profile panel">
+      <div class="me-avatar" id="mobileMeAvatar">乐</div>
+      <div class="me-profile-copy"><strong id="mobileMeName">我的账号</strong><span id="mobileMeRole">已登录</span></div>
+    </section>
+    <section class="panel me-actions-panel">
+      <h2>个人操作</h2>
+      <div class="me-action-list">
+        <button class="me-action" type="button" onclick="changePassword()"><span class="app-module-icon">密</span><span><strong>修改密码</strong><small>更新当前登录密码</small></span><span class="app-module-arrow">›</span></button>
+        <button class="me-action" id="mobileLogoutBtn" type="button"><span class="app-module-icon">退</span><span><strong>退出登录</strong><small>退出当前账号</small></span><span class="app-module-arrow">›</span></button>
+      </div>
+    </section>
+    <section class="panel me-admin-panel admin-only hidden">
+      <div class="app-group-heading"><h2>管理员工具</h2><span>仅管理员可见</span></div>
+      <div class="me-action-list">
+        <button class="me-action" type="button" onclick="go('review')"><span class="app-module-icon">审</span><span><strong>审核中心</strong><small>处理待审核事项</small></span><span class="app-module-arrow">›</span></button>
+        <button class="me-action" type="button" onclick="go('drinks')"><span class="app-module-icon">酒</span><span><strong>酒水单</strong><small>维护公开酒水单</small></span><span class="app-module-arrow">›</span></button>
+        <button class="me-action" type="button" onclick="go('settings')"><span class="app-module-icon">设</span><span><strong>账号与台账</strong><small>账号管理、下载台账数据</small></span><span class="app-module-arrow">›</span></button>
+      </div>
+    </section>
+  </section>
+
+  <!-- ========== 二级：企业证照 ========== -->
+  <section id="view-company" class="hidden subview">
+    <div class="subbar">
+      <button class="btn ghost" onclick="go('dashboard')">← 工作台</button>
+      <div class="subbar-title" tabindex="-1">企业证照</div>
+      <div class="subbar-en">COMPANY LICENSES</div>
+    </div>
+    <div class="toolbar">
+      <label class="sr-only" for="q-company">搜索企业证照</label><input id="q-company" aria-label="搜索企业证照" placeholder="搜索名称 / 编号 / 单位" oninput="loadCerts('company')">
+      <span class="spacer"></span>
+      <button class="btn primary" onclick="showCertForm()">新增资料</button>
+    </div>
+    <div id="list-company" class="cert-grid"></div>
+  </section>
+
+  <!-- ========== 二级：员工健康证 ========== -->
+  <section id="view-employee" class="hidden subview">
+    <div class="subbar">
+      <button class="btn ghost" onclick="go('dashboard')">← 工作台</button>
+      <div class="subbar-title" tabindex="-1">员工健康证</div>
+      <div class="subbar-en">HEALTH CERTIFICATES</div>
+    </div>
+    <div class="toolbar">
+      <label class="sr-only" for="q-employee">搜索员工健康证</label><input id="q-employee" aria-label="搜索员工健康证" placeholder="搜索姓名" oninput="loadCerts('employee')">
+      <span class="spacer"></span>
+      <button class="btn primary" onclick="showHealthForm()">新增健康证</button>
+    </div>
+    <div id="list-employee" class="cert-grid"></div>
+  </section>
+
+  <!-- ========== 二级：审核中心（仅管理员）========== -->
+  <section id="view-review" class="hidden admin-only subview">
+    <div class="subbar">
+      <button class="btn ghost" onclick="go('dashboard')">← 工作台</button>
+      <div class="subbar-title" tabindex="-1">审核中心</div>
+      <div class="subbar-en">REVIEW CENTER</div>
+    </div>
+    <p class="hint">员工新增的资料、资产、仓库物品、上传的附件、资料修改及消防照片和页序申请在这里待审。
+      点「通过」后生效；资料修改审核前保留原内容，不合适就「退回」并填写原因。</p>
+    <div class="panel">
+      <table><thead><tr><th>类别</th><th>名称</th><th>提交人</th><th>时间</th><th>操作</th></tr></thead>
+      <tbody id="reviewList"></tbody></table>
+    </div>
+  </section>
+
+  <!-- ========== 二级：固定资产 ========== -->
+  <section id="view-assets" class="hidden subview">
+    <div class="subbar">
+      <button class="btn ghost" onclick="go('dashboard')">← 工作台</button>
+      <div class="subbar-title" tabindex="-1">固定资产</div>
+      <div class="subbar-en">ASSETS</div>
+    </div>
+    <div class="toolbar">
+      <span class="spacer"></span>
+      <button class="btn primary" onclick="showAssetForm()">新增资产</button>
+    </div>
+    <div class="panel">
+      <table><thead><tr><th>名称</th><th>编号</th><th>分类</th><th>位置</th><th>状态</th><th>领用人</th><th>操作</th></tr></thead>
+      <tbody id="assetList"></tbody></table>
+    </div>
+  </section>
+
+  <!-- ========== 二级：仓库管理 ========== -->
+  <section id="view-inventory" class="hidden subview">
+    <div class="subbar">
+      <button class="btn ghost" onclick="go('dashboard')">← 工作台</button>
+      <div class="subbar-title" tabindex="-1">仓库管理</div>
+      <div class="subbar-en">WAREHOUSE</div>
+    </div>
+    <div id="invMain">
+      <div class="cards" id="invStat" style="margin-bottom:16px"></div>
+      <div class="toolbar">
+        <label class="sr-only" for="q-inventory">搜索仓库物品</label><input id="q-inventory" aria-label="搜索仓库物品" placeholder="搜索名称 / 规格 / 位置" oninput="loadInventory()">
+        <label class="sr-only" for="cat-inventory">仓库物品分类</label><select id="cat-inventory" aria-label="仓库物品分类" onchange="loadInventory()">
+          <option value="">全部分类</option>
+          <option>酒水</option><option>耗材</option><option>其它</option>
+        </select>
+        <span class="spacer"></span>
+        <button class="btn" onclick="openStocktake()">按大类盘点</button>
+        <button class="btn primary" onclick="showInvForm()">新增物品</button>
+      </div>
+      <div class="panel">
+        <table><thead><tr><th>名称</th><th>分类</th><th>规格</th><th>当前库存</th><th>过期</th><th>安全库存</th><th>操作</th></tr></thead>
+        <tbody id="invList"></tbody></table>
+      </div>
+    </div>
+    <div id="stocktakePanel" class="hidden">
+      <div class="toolbar">
+        <select id="st-cat" onchange="loadStocktake()">
+          <option>酒水</option><option>耗材</option><option>其它</option>
+        </select>
+        <span class="spacer"></span>
+        <button class="btn" onclick="closeStocktake()">返回物品列表</button>
+        <button class="btn" onclick="refreshStocktake()">重新加载账面数据</button>
+      </div>
+      <p class="hint">逐行填实际数到的数量，提交后系统自动算盘盈 / 盘亏（仅记录有差异的项）。</p>
+      <p id="stocktakeFeedback" class="form-feedback" role="alert" aria-live="polite"></p>
+      <div class="panel">
+        <table class="wide"><thead><tr>
+          <th>物品名称</th><th>规格</th><th>月初库存</th><th>当月采购</th><th>当月领用</th><th>结余</th><th>实盘数</th><th>差异</th>
+        </tr></thead><tbody id="stList"></tbody></table>
+      </div>
+      <div class="toolbar" style="margin-top:12px">
+        <span id="st-summary" class="hint"></span>
+        <span class="spacer"></span>
+        <button class="btn primary" onclick="submitStocktake()">提交盘点</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== 二级：酒水单（仅管理员） ========== -->
+  <section id="view-drinks" class="hidden admin-only subview">
+    <div class="subbar">
+      <button class="btn ghost" onclick="go('dashboard')">← 工作台</button>
+      <div class="subbar-title" tabindex="-1">酒水单</div>
+      <div class="subbar-en">DRINK MENU</div>
+    </div>
+    <div class="panel">
+      <h2>客人看到的地址</h2>
+      <p class="hint" id="drinkUrl"></p>
+      <p class="hint">
+        这个页面<b>不用登录</b>，任何人打开或扫码都能看，所以只能放售价，不要放进货价、成本价。<br>
+        改价格 = 重新做那一页的图再传上来（建议按类别分页，哪类改价只重做那一页）。
+      </p>
+      <div class="row-actions">
+        <a class="btn" href="/drinks" target="_blank">打开公开页看看</a>
+        <button class="btn" onclick="editDrinkNote()">改底部说明</button>
+      </div>
+    </div>
+    <div class="panel">
+      <h2>酒单页面</h2>
+      <div class="toolbar">
+        <span class="spacer"></span>
+        <button class="btn primary" onclick="showDrinkUpload()">+ 上传新的一页</button>
+      </div>
+      <table><thead><tr><th>图</th><th>标题</th><th>上传时间</th><th>操作</th></tr></thead>
+      <tbody id="drinkList"></tbody></table>
+      <p class="hint">第一页会显示在最上面。图片建议宽度 750px 以上，JPG 或 PNG。</p>
+    </div>
+  </section>
+
+  <!-- ========== 二级：设置 ========== -->
+  <section id="view-settings" class="hidden admin-only subview">
+    <div class="subbar">
+      <button class="btn ghost" onclick="go('dashboard')">← 工作台</button>
+      <div class="subbar-title" tabindex="-1">设置与账号</div>
+      <div class="subbar-en">SETTINGS</div>
+    </div>
+    <div class="panel">
+      <h2>我的账号</h2>
+      <div class="row-actions">
+        <button class="btn" onclick="changePassword()">修改我的密码</button>
+        <a class="btn" href="/api/backup">下载台账数据（不含附件）</a>
+      </div>
+      <p class="hint" id="versionTag" style="margin-top:6px"></p>
+      <p class="hint">
+        这个下载只含台账里的文字记录，<b>不含上传的照片和附件</b>，也不含账号密码，不能拿来完整还原系统。<br>
+        要真正备份，请把整个 <b>data 文件夹</b>复制一份存到别处（另一台电脑或移动硬盘），不要只留在服务器里。
+      </p>
+    </div>
+    <div class="panel">
+      <h2>账号管理</h2>
+      <div class="toolbar"><span class="spacer"></span>
+        <button class="btn" onclick="showUserForm()">新建账号</button></div>
+      <table><thead><tr><th>账号</th><th>姓名</th><th>角色</th><th>最后登录</th><th>操作</th></tr></thead>
+      <tbody id="userList"></tbody></table>
+    </div>
+  </section>
+
+</div><!-- /main -->
+</div><!-- /shell -->
+
+<nav class="tabbar ledger-bottom-nav" aria-label="页面底部导航">
+  <button class="tab-item" data-nav="dashboard" onclick="go('dashboard')"><span class="ti-ico">台</span><span>工作台</span></button>
+  <button class="tab-item" data-nav="apps" onclick="go('apps')"><span class="ti-ico">资</span><span>资料</span></button>
+  <button class="tab-item" data-nav="inventory" onclick="go('inventory')"><span class="ti-ico">物</span><span>物资</span></button>
+  <button class="tab-item" data-nav="me" onclick="go('me')"><span class="ti-ico">我</span><span>我的</span></button>
+</nav>
+<footer class="app-footer"><span>乐秀平台系统</span><span>门店内部管理平台</span></footer>
+
+<div id="modal" class="mask hidden">
+  <div class="modal" id="modalBox" role="dialog" aria-modal="true" tabindex="-1"
+       aria-labelledby="modalTitle">
+    <!-- 加这几个属性是让读屏软件认得出这是个弹窗、标题是哪一句 -->
+    <div style="display:flex;align-items:center;margin-bottom:10px">
+      <h3 id="modalTitle" style="flex:1"></h3>
+      <button id="modalClose" class="btn" style="padding:4px 10px" aria-label="关闭弹窗">✕</button>
+    </div>
+    <div id="modalBody"></div>
+    <div class="modal-actions">
+      <span id="modalExtra" style="flex:1"></span>
+      <button id="modalCancel" class="btn">取消</button>
+      <button id="modalOk" class="btn primary">保存</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast" class="hidden" aria-hidden="true"></div>
+<div id="toastLive" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></div>
+<script src="/static/attachments.js?v={{ v }}"></script>
+<script src="/static/app.js?v={{ v }}"></script>
+<script>
+/* 导航高亮 + 面包屑 + 头像首字：包一层 go()，不修改 app.js 本身 */
+(function () {
+  var LABELS = {
+    dashboard: '工作台', apps: '应用', me: '我的', company: '企业证照', employee: '员工健康证',
+    assets: '固定资产', inventory: '仓库管理', review: '审核中心',
+    drinks: '酒水单', settings: '系统设置', reminders: '提醒明细'
+  };
+  function markNav(v) {
+    var nodes = document.querySelectorAll('[data-nav]');
+    var mobileRoot = (v === 'dashboard') ? 'dashboard' :
+      (v === 'me' ? 'me' : ((v === 'inventory' || v === 'assets') ? 'inventory' : 'apps'));
+    for (var i = 0; i < nodes.length; i++) {
+      var n = nodes[i];
+      var navValue = n.getAttribute('data-nav');
+      var match = n.classList.contains('tab-item') ? navValue === mobileRoot : navValue === v;
+      if (match) n.classList.add('on');
+      else n.classList.remove('on');
+    }
+    var crumb = document.getElementById('crumbNow');
+    if (crumb && LABELS[v]) crumb.textContent = LABELS[v];
+  }
+  var orig = window.go;
+  if (typeof orig === 'function') {
+    window.go = function (v) { var result = orig.apply(this, arguments); markNav(state.view); return result; };
+  }
+  window.markNav = markNav;
+
+  // #meName 是 app.js 异步填的，填完顺手把头像换成姓名第一个字
+  var mn = document.getElementById('meName');
+  if (mn) {
+    var sync = function () {
+      var txt = (mn.textContent || '').trim();
+      var av = document.getElementById('meAvatar');
+      if (av) av.textContent = txt.charAt(0) || '乐';
+    };
+    sync();
+    if (window.MutationObserver) new MutationObserver(sync).observe(mn, { childList: true, characterData: true, subtree: true });
+  }
+
+  // 模块卡上的红标签：有到期/低库存就往对应卡片上挂一个，和参考图一致
+  var RED = 'background:rgba(255,82,104,.16);border:1px solid rgba(255,82,104,.44);'
+          + 'color:#FF5268;font-size:11px;line-height:1.5;padding:1px 9px;border-radius:999px;'
+          + 'display:inline-block;margin-top:7px';
+  // 每次都要**重新写一遍**（包括写成空把它撤掉）。以前只管往上加：
+  // 东西处理完了、数量已经归零，卡片上的红标签还留在那儿继续报警；
+  // 而且每个模块都拿全站那个总数字去贴，企业卡写着“即将过期”数的却是全站已过期，
+  // 员工卡还把企业资料算进“几人即将过期”（审计 10/03 S-03）。
+  function setTag(mod, text) {
+    var card = document.querySelector('.mod-card[data-mod="' + mod + '"]');
+    if (!card) return;
+    var body = card.querySelector('.mod-body');
+    if (!body) return;
+    var tag = body.querySelector('.mod-tag');
+    if (!text) { if (tag) tag.remove(); return; }
+    if (!tag) {
+      tag = document.createElement('span');
+      tag.className = 'mod-tag';
+      tag.setAttribute('style', RED);
+      body.appendChild(tag);
+    }
+    tag.textContent = text;
+  }
+  window.markModTag = setTag;
+  // 只数“即将到期”和“已过期”这两档，别的档位不往红标签上凑
+  function alertText(s, unit) {
+    s = s || {};
+    if (s.expired) return s.expired + ' ' + unit + '已过期';
+    if (s.warn) return s.warn + ' ' + unit + '即将到期';
+    return '';
+  }
+  // 红标签的数据自己问接口要一份（不动 app.js 的 loadDashboard）
+  function fetchDash() {
+    fetch('/api/dashboard', { headers: { 'X-Requested-With': 'lexiu' } })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (d) {
+        if (!d) return;
+        var byScope = d.cert_scope || {};
+        // 各自的模块只数各自那一页管得着的东西
+        setTag('company', alertText(byScope.company, '份'));
+        setTag('employee', alertText(byScope.employee, '份'));
+        // 库存不足要数全部，不能用列表里那十几条（它只带了最要紧的 15 条）
+        var wh = d.warehouse || {};
+        setTag('inventory', wh.low_stock ? wh.low_stock + ' 种库存不足' : '');
+      })
+      .catch(function () { /* 拿不到就不显示标签，不影响其他内容 */ });
+  }
+  document.addEventListener('DOMContentLoaded', function () {
+    setTimeout(fetchDash, 900);
+    setInterval(fetchDash, 60000);
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>消防照片册打印 · 乐秀</title>
+<link rel="stylesheet" href="/static/fire.css?v={{ v }}">
+</head>
+<body class="fire-print">
+<section class="fire-controls" aria-label="打印准备">
+  <a href="/fire">返回消防档案</a><h1>消防照片册打印预览</h1>
+  <p>一张照片一页 A4 竖版。完整等比居中，比例不同留白；请检查文字、签字和四角。每次打印当前一册，全部分册合计才是完整照片册。</p>
+  <p id="firePrintSummary"></p><label for="firePrintPart">选择分册</label><select id="firePrintPart"></select>
+  <div id="firePartSummary"></div>
+  <p id="firePrintStatus" role="status" aria-live="polite"></p>
+  <button type="button" id="firePrintRetry">重新加载并核对</button>
+  <button type="button" id="firePrintButton" disabled>打印当前册／另存 PDF</button>
+  <p>打印前会再次核对授权照片及顺序。此入口不能阻止浏览器 Ctrl+P，也不能撤回已合法显示或保存的内容。手机打印能力取决于系统和浏览器，可在电脑打开。</p>
+</section>
+<main id="firePrintSheets" aria-label="A4 照片册"></main>
+<script type="application/json" id="firePrintManifest">{{ manifest | tojson }}</script>
+<script src="/static/fire_print.js?v={{ v }}"></script>
+</body>
+</html>

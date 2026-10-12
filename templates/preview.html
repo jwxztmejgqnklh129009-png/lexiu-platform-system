@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>手机 / 电脑效果预览</title>
+<link rel="stylesheet" href="/static/style.css?v={{ v }}">
+<style>
+.pv-bar{display:flex;gap:8px;align-items:center;padding:12px 16px;background:#191A14;border-bottom:1px solid #4B4230;flex-wrap:wrap;position:sticky;top:0;z-index:10}
+.pv-bar .btn{padding:6px 14px}
+.pv-bar .btn.on{background:#A77C32;border-color:#A77C32;color:#FFFCF5}
+.pv-hint{font-size:12.5px;color:#CBBD9E;margin-left:auto}
+.pv-stage{display:flex;justify-content:center;padding:20px;overflow:auto;background:#171811;min-height:calc(100vh - 57px)}
+.pv-frame{border:1px solid #4B4230;border-radius:14px;background:#171811;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.5)}
+.pv-frame.nophone{border-radius:8px}
+.pv-phone{border:10px solid #2C2C2A;border-radius:28px;background:#2C2C2A}
+.pv-notch{height:16px;background:#2C2C2A;border-radius:14px 14px 0 0;margin:-10px -10px 0}
+iframe{border:none;display:block;width:100%;height:100%}
+</style>
+</head>
+<body>
+
+<div class="pv-bar">
+  <button class="btn on" data-w="390" data-h="844" data-phone="1">手机 390</button>
+  <button class="btn" data-w="768" data-h="1024" data-phone="0">平板 768</button>
+  <button class="btn" data-w="1440" data-h="900" data-phone="0">电脑 1440</button>
+  <button class="btn" id="rotate">旋转</button>
+  <a class="btn" href="/">返回系统</a>
+  <span class="pv-hint" id="hint">当前：手机竖屏 390×844</span>
+</div>
+
+<div class="pv-stage">
+  <div id="wrap" class="pv-phone">
+    <div class="pv-notch"></div>
+    <div id="frame" class="pv-frame" style="width:390px;height:844px">
+      <!-- 本机预览的首页需要允许在同源外框中加载；正式站点不会渲染此页面。 -->
+      <iframe id="pv" src="/?preview_frame=1"></iframe>
+    </div>
+  </div>
+</div>
+
+<script>
+var portrait = true;
+document.querySelectorAll('.pv-bar .btn[data-w]').forEach(function(b){
+  b.onclick = function(){
+    document.querySelectorAll('.pv-bar .btn[data-w]').forEach(function(x){x.classList.remove('on');});
+    b.classList.add('on');
+    portrait = true;
+    apply(parseInt(b.dataset.w), parseInt(b.dataset.h), b.dataset.phone === '1');
+  };
+});
+document.getElementById('rotate').onclick = function(){
+  var on = document.querySelector('.pv-bar .btn.on');
+  var w = parseInt(on.dataset.w), h = parseInt(on.dataset.h);
+  portrait = !portrait;
+  apply(portrait ? w : h, portrait ? h : w, on.dataset.phone === '1');
+};
+function apply(w, h, phone){
+  var frame = document.getElementById('frame');
+  var wrap = document.getElementById('wrap');
+  var scale = Math.min(1, (window.innerWidth - 80) / w);
+  frame.style.width = w + 'px';
+  frame.style.height = (h - 26) + 'px';
+  frame.style.transform = 'scale(' + scale + ')';
+  frame.style.transformOrigin = 'top center';
+  wrap.style.width = (w * scale + (phone ? 20 : 2)) + 'px';
+  wrap.style.height = (h * scale + (phone ? 20 : 2)) + 'px';
+  wrap.className = phone ? 'pv-phone' : '';
+  // 只调整视口；iframe 已在 HTML 中加载，切换设备不重载、不丢草稿。
+  document.getElementById('hint').textContent =
+    '当前：' + w + '×' + h + (phone ? '（手机外框）' : '') + '　缩放 ' + Math.round(scale * 100) + '%';
+}
+apply(390, 844, true);
+</script>
+</body>
+</html>

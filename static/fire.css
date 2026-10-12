@@ -1,0 +1,145 @@
+.fire-book { margin:0; background:#f5f0e7; color:#302d28; }
+.fire-book *, .fire-print * { box-sizing:border-box; }
+.fire-book .fire-header { min-height:78px; display:grid; grid-template-columns:minmax(0,1fr) auto minmax(0,1fr); align-items:center; gap:18px; padding:12px 28px; background:#171715; color:#efe1bd; border-bottom:1px solid #453b29; }
+.fire-book .fire-header a { color:inherit; text-decoration:none; }
+.fire-book .fire-header-back { display:inline-flex; align-items:center; gap:6px; min-height:44px; width:max-content; padding:6px 0; font-size:13px; }
+.fire-book .fire-header-back>span:first-child { font-size:38px; font-weight:300; line-height:.7; }
+.fire-book .fire-header-brand { display:flex; align-items:center; justify-content:center; gap:10px; min-width:0; color:#c9b98f; font-size:11px; letter-spacing:1px; white-space:nowrap; }
+.fire-book .fire-header-brand .lexiu-logo { width:104px; height:35px; --logo-c:#F4E9D2; }
+.fire-book .fire-header-side { min-width:0; text-align:right; }
+.fire-book .fire-header-side>strong { display:block; font-size:16px; font-weight:600; letter-spacing:1px; }
+.fire-book .fire-header-side nav { display:flex; justify-content:flex-end; align-items:center; gap:10px; margin-top:5px; color:#c7b895; font-size:11px; }
+.fire-book .fire-header-side nav a { padding:3px 0; }
+.fire-book a { color:inherit; text-decoration:none; }
+.fire-book .fire-content { display:block; max-width:1180px; margin:auto; padding:34px 28px calc(112px + env(safe-area-inset-bottom)); }
+.fire-book h1 { font-size:30px; margin:0 0 6px; line-height:1.3; letter-spacing:.5px; }
+.fire-book h2 { font-size:20px; margin:0 0 8px; }
+.fire-book p { margin:8px 0; line-height:1.6; overflow-wrap:anywhere; }
+.fire-book .fire-catalog-view { max-width:100%; margin:0 auto; }
+.fire-book .fire-catalog-heading { display:grid; grid-template-columns:minmax(0,1fr) minmax(168px,230px); align-items:start; gap:24px; }
+.fire-book .fire-catalog-title-block p { margin:0; color:#766b5a; font-size:17px; }
+.fire-book .fire-catalog-heading>div:first-child { min-width:0; }
+.fire-book .fire-catalog-progress { align-self:start; display:flex; flex-direction:column; gap:7px; padding-top:4px; color:#766b5a; font-size:12px; }
+.fire-book .fire-progress-label { display:flex; align-items:baseline; justify-content:space-between; gap:10px; }
+.fire-book .fire-progress-label strong { color:#292722; font-size:30px; line-height:1; letter-spacing:1px; }
+.fire-book .fire-progress-track { width:100%; height:14px; overflow:hidden; border-radius:999px; background:#e5dfd3; }
+.fire-book .fire-progress-track>span { display:block; width:0; height:100%; border-radius:inherit; background:#d3ad61; transition:width .2s ease; }
+.fire-book .fire-catalog-toolbar { margin:30px 0 24px; }
+.fire-book #fireDirectorySearch { width:100%; min-height:58px; margin:0; padding:12px 18px; border:1px solid #ded6c8; border-radius:16px; background:#fcfaf5; color:#393329; font:inherit; font-size:18px; box-shadow:0 1px 0 rgba(71,55,27,.02); }
+.fire-book .fire-empty-catalog { color:#776c56; font-size:13px; padding:10px 2px; }
+.fire-book .fire-catalog-section-heading, .fire-book .fire-directory-group-heading { display:flex; align-items:center; justify-content:space-between; gap:14px; }
+.fire-book .fire-catalog-section-heading { margin:0 0 14px; }
+.fire-book .fire-catalog-section-heading h2, .fire-book .fire-directory-group-heading h2 { margin:0; font-size:20px; letter-spacing:.2px; }
+.fire-book .fire-catalog-section-heading>span, .fire-book .fire-directory-group-heading>span { flex:none; padding:6px 13px; border-radius:999px; background:#ebe7df; color:#4e4a42; font-size:14px; }
+.fire-book .fire-directory-group { margin:0 0 28px; }
+.fire-book .fire-directory-group-a .fire-directory-group-heading { display:none; }
+.fire-book .fire-directory-group-heading { margin:28px 0 14px; }
+.fire-book .fire-directory-list { display:grid; gap:12px; }
+.fire-book button, .fire-book .fire-actions a { min-height:44px; padding:10px 14px; border:1px solid #cfc4ae; border-radius:8px; background:#fffaf2; color:#393329; cursor:pointer; font:inherit; }
+.fire-book button:hover, .fire-book .fire-actions a:hover { border-color:#a2874d; }
+.fire-book button:disabled { opacity:.5; cursor:default; }
+.fire-book button:focus-visible, .fire-book a:focus-visible { outline:3px solid #9f813e; outline-offset:3px; }
+.fire-book .fire-directory-row { display:grid; grid-template-columns:8px 66px minmax(0,1fr) auto 24px; align-items:center; gap:14px; width:100%; min-height:88px; padding:14px 16px; text-align:left; border:1px solid #e6ded0; border-radius:16px; background:#fcfaf5; }
+.fire-book .fire-directory-row:hover, .fire-book .fire-directory-row.on { background:#fffdf8; border-color:#d4b16e; }
+.fire-book .fire-directory-marker { display:block; width:8px; height:46px; border-radius:999px; background:#d3ad61; }
+.fire-book .fire-directory-row strong { color:#211f1b; font-size:21px; line-height:1; letter-spacing:.4px; }
+.fire-book .fire-directory-name { min-width:0; color:#292722; font-size:18px; line-height:1.35; overflow-wrap:anywhere; }
+.fire-book .fire-directory-state { color:#756f65; font-size:14px; white-space:nowrap; }
+.fire-book .fire-directory-arrow { color:#ad8745; font-size:35px; font-weight:300; line-height:.7; }
+.fire-book .fire-catalog-print { position:fixed; left:50%; bottom:env(safe-area-inset-bottom); z-index:25; width:min(calc(100% - 56px),1124px); transform:translateX(-50%); padding:14px 0 4px; background:#f5f0e7; }
+.fire-book .fire-print-primary { display:flex; align-items:center; justify-content:center; min-height:58px; border:1px solid #d3ad61; border-radius:14px; background:#d9b56b; color:#2d2415; font-size:19px; font-weight:600; letter-spacing:.4px; }
+.fire-book .fire-print-primary:hover { background:#e2c27e; }
+.fire-book .fire-work { min-width:0; }
+.fire-book .fire-detail-back { margin-bottom:12px; }
+.fire-book .fire-heading { display:flex; justify-content:space-between; gap:20px; flex-wrap:wrap; }
+.fire-book .fire-kicker { color:#8c7038; font-size:12px; }
+.fire-book .fire-actions, .fire-book .fire-toolbar, .fire-book .fire-card-actions { display:flex; gap:8px; flex-wrap:wrap; }
+.fire-book .fire-actions a { align-content:center; }
+.fire-book .fire-hint { font-size:13px; color:#766a54; }
+.fire-book .fire-status { margin:16px 0; border-left:3px solid #ac8a43; padding:0 12px; line-height:1.7; overflow-wrap:anywhere; }
+.fire-book .fire-status:empty { display:none; }
+.fire-book .fire-toolbar { margin:20px 0; }
+.fire-book .fire-photo-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:18px; }
+.fire-book .fire-card { background:#fffcf6; border:1px solid #ded5c4; border-radius:12px; padding:12px; min-width:0; }
+.fire-book .fire-paper { aspect-ratio:210/297; background:white; border:1px solid #dfd8ca; display:flex; flex-direction:column; padding:10px; gap:8px; overflow:hidden; }
+.fire-book .fire-paper-title, .fire-book .fire-paper-footer { flex:none; font-size:12px; color:#5d5648; overflow-wrap:anywhere; }
+.fire-book .fire-paper img { width:100%; height:0; flex:1; min-height:0; object-fit:contain; cursor:zoom-in; }
+.fire-book .fire-empty { aspect-ratio:210/297; border:2px dashed #c4b797; border-radius:7px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:12px; background:#faf7ef; }
+.fire-book .fire-empty button { min-width:140px; }
+.fire-book .fire-state { font-size:13px; color:#917337; font-weight:600; }
+.fire-book .fire-state.approved { color:#526549; }
+.fire-book .fire-meta { font-size:12px; color:#746b5e; }
+.fire-book .fire-error { color:#a13730; font-size:13px; }
+.fire-book .fire-card-actions button { flex:1 0 auto; font-size:13px; }
+.fire-book .fire-submit-bar { display:flex; gap:12px; margin:22px 0; }
+.fire-book #fireAddBlank { min-width:54px; font-size:24px; }
+.fire-book #fireSubmit { background:#302a1e; color:#f4dfb3; }
+.fire-book .fire-request { padding:16px; border:1px solid #ddd1b8; border-radius:9px; margin:12px 0; background:#faf6ec; font-size:13px; }
+.fire-book .fire-zoom { width:min(96vw,1000px); max-height:95vh; border:1px solid #c9b88f; border-radius:12px; padding:16px; background:#fcf9f1; }
+.fire-book .fire-zoom::backdrop { background:rgba(0,0,0,.7); }
+.fire-book .fire-zoom img { display:block; max-width:100%; max-height:80vh; object-fit:contain; margin:12px auto 0; }
+@media (max-width:850px) {
+  .fire-book .fire-content { padding:26px 20px calc(112px + env(safe-area-inset-bottom)); }
+  .fire-book .fire-header { padding:14px 20px; }
+}
+@media (max-width:540px) {
+  .fire-book .fire-content { padding:28px 18px calc(112px + env(safe-area-inset-bottom)); }
+  .fire-book .fire-header { min-height:86px; grid-template-columns:auto minmax(0,1fr) auto; gap:8px; padding:13px 16px; }
+  .fire-book .fire-header-back { font-size:0; gap:0; }
+  .fire-book .fire-header-back>span:first-child { font-size:42px; }
+  .fire-book .fire-header-brand { flex-direction:column; gap:1px; font-size:9px; letter-spacing:.6px; }
+  .fire-book .fire-header-brand .lexiu-logo { width:92px; height:30px; }
+  .fire-book .fire-header-side>strong { font-size:13px; white-space:nowrap; }
+  .fire-book .fire-header-side nav { display:none; }
+  .fire-book .fire-catalog-heading { grid-template-columns:minmax(0,1fr) 132px; gap:12px; }
+  .fire-book h1 { font-size:29px; }
+  .fire-book .fire-catalog-title-block p { font-size:16px; line-height:1.45; }
+  .fire-book .fire-catalog-progress { padding-top:4px; font-size:11px; }
+  .fire-book .fire-progress-label strong { font-size:30px; }
+  .fire-book .fire-progress-track { height:11px; }
+  .fire-book .fire-catalog-toolbar { margin:28px 0 26px; }
+  .fire-book #fireDirectorySearch { min-height:58px; padding:12px 16px; font-size:16px; }
+  .fire-book .fire-catalog-section-heading h2, .fire-book .fire-directory-group-heading h2 { font-size:19px; }
+  .fire-book .fire-catalog-section-heading>span, .fire-book .fire-directory-group-heading>span { padding:5px 11px; font-size:13px; }
+  .fire-book .fire-directory-row { grid-template-columns:8px 54px minmax(0,1fr) auto 18px; gap:10px; min-height:86px; padding:13px 14px; border-radius:15px; }
+  .fire-book .fire-directory-marker { width:8px; height:45px; }
+  .fire-book .fire-directory-row strong { font-size:19px; }
+  .fire-book .fire-directory-name { font-size:17px; }
+  .fire-book .fire-directory-state { font-size:12px; }
+  .fire-book .fire-directory-arrow { font-size:31px; }
+  .fire-book .fire-print-primary { min-height:56px; font-size:18px; }
+  .fire-book .fire-catalog-print { width:calc(100% - 36px); padding:10px 0 calc(4px + env(safe-area-inset-bottom)); }
+  .fire-book .fire-photo-grid { grid-template-columns:minmax(0,1fr); }
+  .fire-book .fire-actions { width:100%; }
+  .fire-book .fire-actions a { flex:1; font-size:13px; text-align:center; }
+  .fire-book .fire-card-actions button { flex:1 0 40%; }
+}
+.fire-print { background:#e8e3d9; margin:0; font:14px/1.6 Arial,"Microsoft YaHei",sans-serif; color:#302d28; }
+.fire-print .fire-controls { padding:24px; margin:0 auto 22px; max-width:1000px; background:#faf6ed; }
+.fire-print .fire-controls h1 { font-size:24px; }
+.fire-print .fire-controls button, .fire-print .fire-controls select, .fire-print .fire-controls a { min-height:44px; padding:10px 14px; border:1px solid #c5b793; border-radius:6px; background:#fffaf0; color:#332e24; display:inline-block; margin:4px; font:inherit; }
+.fire-print .fire-controls button:disabled { opacity:.5; }
+.fire-print #firePrintStatus { color:#775326; }
+.fire-print .fire-sheet { width:186mm; height:273mm; margin:20px auto; background:white; display:flex; flex-direction:column; gap:3mm; padding:0; overflow:hidden; box-shadow:0 3px 14px #0002; }
+.fire-print .fire-sheet h2 { flex:none; font-size:12pt; line-height:1.5; margin:0; padding:0; }
+.fire-print .fire-sheet img { width:100%; height:0; min-height:0; flex:1; object-fit:contain; }
+.fire-print .fire-page-number { flex:none; text-align:center; font-size:10pt; margin:0; line-height:1.5; }
+@media screen and (max-width:740px) {
+  .fire-print .fire-controls { padding:14px; }
+  .fire-print .fire-sheet { width:calc(100vw - 24px); height:auto; aspect-ratio:186/273; }
+  .fire-print .fire-sheet h2 { font-size:12px; }
+  .fire-print .fire-page-number { font-size:11px; }
+}
+@page { size:A4 portrait; margin:12mm; }
+@media print {
+  .fire-print { margin:0; background:white; }
+  .fire-print .fire-controls { display:none !important; }
+  .fire-print .fire-sheet { width:186mm; height:272mm; margin:0; box-shadow:none; break-inside:avoid; break-after:page; page-break-after:always; }
+  .fire-print .fire-sheet:last-child { break-after:auto; page-break-after:auto; }
+}
+
+/* 浅雾清单正式站落地：消防页沿用业务米白内容，只同步品牌外壳。 */
+.theme-ledger.fire-book .fire-header{background:#FBFCF9;color:#0E7C70;border-bottom-color:#DCE7E2}
+.theme-ledger.fire-book .fire-header-back,.theme-ledger.fire-book .fire-header-side nav{color:#6D7C77}
+.theme-ledger.fire-book .fire-header-brand{color:#0E7C70}
+.theme-ledger.fire-book .fire-header-brand .lexiu-logo{--logo-c:#0E7C70}

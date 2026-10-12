@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>登录 - 乐秀内部管理平台</title>
+<link rel="icon" href="/static/favicon.ico?v={{ v }}">
+<link rel="stylesheet" href="/static/style.css?v={{ v }}">
+</head>
+<body class="login-body theme-ledger">
+
+<div class="page-shell">
+  <div class="main-grid">
+
+    <!-- 品牌信息：手机上位于登录表单之前 -->
+    <section class="brand-side">
+      <div class="login-brand-row"><span class="lexiu-logo white lv-logo" role="img" aria-label="L'OK SHOW 乐秀"></span><span>门店内部管理平台</span></div>
+      <h1>门店琐事，<br>有序安放。</h1>
+      <p class="lv-lead">每一份资料、每一件物品，都有清楚的去向。</p>
+      <div class="login-context"><span>证照与健康证 · 有效期清晰</span><span>资产与仓库 · 登记有据可查</span><span>资料附件 · 统一归档</span></div>
+      <a class="login-public-link" href="/drinks">查看公开酒水单</a>
+    </section>
+
+    <!-- 右边：登录卡
+         表单里的 ID 一个都不能动：loginForm / loginUser / loginPass /
+         loginRemember / loginErr，app.js 的登录逻辑全靠它们。 -->
+    <section class="login-side">
+      <form class="login-card" id="loginForm">
+        <div class="lc-head">
+          <div class="lc-title">账号登录</div>
+          <div class="lc-sub">请输入门店账号与密码</div>
+        </div>
+
+        <div class="field">
+          <label for="loginUser">账号</label>
+          <input id="loginUser" autocomplete="username" placeholder="请输入账号">
+        </div>
+
+        <div class="field">
+          <label for="loginPass">密码</label>
+          <div class="input-wrap">
+            <input id="loginPass" type="password" autocomplete="current-password" placeholder="请输入密码">
+            <button type="button" class="password-toggle" onclick="togglePw(this)" aria-label="显示密码" aria-pressed="false">显示</button>
+          </div>
+        </div>
+
+        <div class="login-message" id="loginErr" role="alert" aria-live="polite"></div>
+
+        <div class="lf-row">
+          <label class="lf-remember"><input type="checkbox" id="loginRemember">记住账号</label>
+        </div>
+
+        <button class="submit-button" type="submit">进入平台</button>
+      </form>
+    </section>
+
+  </div>
+</div>
+<footer class="login-footer"><span>乐秀平台系统</span><span>门店内部使用</span></footer>
+
+<div id="toast" class="hidden"></div>
+<script src="/static/app.js?v={{ v }}"></script>
+<script>
+/* 密码显隐（纯展示，不碰登录逻辑） */
+function togglePw(btn) {
+  var i = btn.parentNode.querySelector('input');
+  if (!i) return;
+  var show = i.type === 'password';
+  i.type = show ? 'text' : 'password';
+  btn.textContent = show ? '隐藏' : '显示';
+  btn.setAttribute('aria-label', show ? '隐藏密码' : '显示密码');
+  btn.setAttribute('aria-pressed', show ? 'true' : 'false');
+}
+</script>
+</body>
+</html>

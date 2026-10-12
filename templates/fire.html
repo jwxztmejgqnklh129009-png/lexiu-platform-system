@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>消防档案 · 乐秀</title>
+<link rel="icon" href="/static/favicon.ico?v={{ v }}">
+<link rel="stylesheet" href="/static/style.css?v={{ v }}">
+<link rel="stylesheet" href="/static/fire.css?v={{ v }}">
+</head>
+<body class="app fire-book theme-ledger">
+<header class="fire-header">
+  <a class="fire-header-back" href="/" aria-label="返回工作台"><span aria-hidden="true">‹</span><span>工作台</span></a>
+  <div class="fire-header-brand"><span class="lexiu-logo white" role="img" aria-label="乐秀"></span><span>内部管理平台</span></div>
+  <div class="fire-header-side"><strong>消防档案</strong><nav aria-label="工作台导航"><a id="fireReviewLink" href="/?view=review" hidden>审核中心</a><span id="fireMe"></span></nav></div>
+</header>
+<main class="fire-content">
+  <section id="fireCatalogView" class="fire-catalog-view" aria-labelledby="fireCatalogTitle">
+    <div class="fire-catalog-heading"><div class="fire-catalog-title-block"><h1 id="fireCatalogTitle">消防档案</h1><p>固定目录 · 按 A、B 编号排列</p></div>
+      <div id="fireCatalogProgress" class="fire-catalog-progress" aria-live="polite"><div class="fire-progress-label"><span>已生效目录</span><strong id="fireCatalogProgressValue">0/40</strong></div><div id="fireCatalogProgressTrack" class="fire-progress-track" role="progressbar" aria-label="已有生效照片目录进度" aria-valuemin="0" aria-valuemax="40" aria-valuenow="0"><span id="fireCatalogProgressBar"></span></div><span>仅统计至少 1 张已生效照片 · 待审不计入打印</span></div>
+    </div>
+    <div class="fire-catalog-toolbar"><label class="sr-only" for="fireDirectorySearch">搜索消防目录</label><input id="fireDirectorySearch" type="search" placeholder="搜索 A01 或目录名称" autocomplete="off"></div>
+    <div class="fire-catalog-section-heading"><h2 id="fireCatalogSectionTitle">固定目录（A01 - A18）</h2><span id="fireCatalogSectionCount">共 18 项</span></div>
+    <nav id="fireDirectoryGroups" aria-label="消防固定目录"></nav>
+    <div class="fire-catalog-print"><a id="firePrintAll" class="fire-print-primary" href="/fire/print?scope=all">打印目录</a></div>
+    <div id="fireCatalogStatus" class="fire-status" role="status" aria-live="polite" tabindex="-1"></div>
+  </section>
+  <section id="fireDetailView" class="fire-work hidden" aria-labelledby="fireDirectoryTitle">
+    <div class="fire-detail-back"><button type="button" id="fireBackCatalog">← 返回固定目录</button></div>
+    <div class="fire-heading"><div><p class="fire-kicker">消防照片册</p><h1 id="fireDirectoryTitle" tabindex="-1">正在加载…</h1><p id="fireDirectoryCount"></p></div>
+      <div class="fire-actions"><a id="firePrintCurrent" class="btn" href="/fire/print?scope=A01">打印当前目录</a><a class="btn" href="/fire/print?scope=all">打印全部有照片目录</a></div>
+    </div>
+    <p class="fire-hint">拍照或选图后，在同框预览并确认页序。仅接收 JPG／JPEG、PNG，单图最多 15MB、总像素不超过 6000 万；手机高像素照片会自动生成压缩图，原图仍保留。每批处理 10 张并自动继续，目录总数不限。</p>
+    <p id="fireRoleHint" class="fire-hint"></p>
+    <div id="fireStatus" class="fire-status" role="status" aria-live="polite" tabindex="-1"></div>
+    <div class="fire-toolbar"><button type="button" id="fireRefresh" disabled>刷新目录</button><button type="button" id="fireSaveOrder" disabled>提交生效照片页序</button></div>
+    <div id="firePhotos" class="fire-photo-grid"></div>
+    <div class="fire-submit-bar"><button type="button" id="fireAddBlank" aria-label="增加下一张照片" disabled>＋</button><button type="button" id="fireSubmit" disabled>提交照片</button></div>
+    <section id="fireRequests" class="fire-requests" aria-label="照片页序申请"></section>
+  </section>
+  <input type="file" id="fireCamera" accept="image/jpeg,image/png" capture="environment" hidden>
+  <input type="file" id="fireUpload" accept="image/jpeg,image/png" multiple hidden>
+</main>
+<dialog id="fireZoom" class="fire-zoom"><button type="button" id="fireZoomClose">关闭大图</button><img id="fireZoomImage" alt="消防照片大图"></dialog>
+<script src="/static/fire.js?v={{ v }}"></script>
+</body>
+</html>

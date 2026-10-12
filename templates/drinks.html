@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=3,user-scalable=yes">
+<meta name="robots" content="noindex,nofollow">
+<title>乐秀 · 酒水单</title>
+<style>
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  /* 公共酒单保持黑金品牌外壳，图片按原比例完整展示。 */
+  body { margin:0; background:#181713; color:#F4E9D2;
+         font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif; }
+  .head { text-align:center; padding:20px 16px 14px; border-bottom:1px solid #4B4230; }
+  .head .t1 { display:flex; align-items:center; justify-content:center; gap:11px; }
+  /* logo 用白色（深底上最亮）；同样只存形状，颜色由这里决定 */
+  .dk-logo { width:171px; height:27px; display:block; background:#F4E9D2;
+             -webkit-mask:url(/static/logo_white.png?v=1) center/contain no-repeat;
+             mask:url(/static/logo_white.png?v=1) center/contain no-repeat; }
+  @supports not ((-webkit-mask:url("#m")) or (mask:url("#m"))){
+    .dk-logo { background:none; background-image:url(/static/logo_white.png?v=1);
+               background-repeat:no-repeat; background-position:center; background-size:contain; }
+  }
+  .head .t1 .dk-t { font-size:19px; letter-spacing:3px; font-weight:600;color:#D1AD63; }
+  .head .t2 { font-size:12px; color:#CBBD9E; margin-top:6px; }
+  .wrap { max-width:520px; margin:0 auto; padding:12px 12px 0; }
+  .page { display:block; width:100%; height:auto; object-fit:contain; border-radius:12px; margin-bottom:12px;
+          border:1px solid #4B4230; background:#24221C; }
+  .page:active { opacity:.85; }
+  .foot { text-align:center; font-size:11px; color:#A99B7F; line-height:1.9;
+          padding:8px 20px 30px; }
+  .foot .note { color:#CBBD9E;overflow-wrap:anywhere; }
+  .empty { text-align:center; color:#CBBD9E; font-size:13px; padding:60px 20px; line-height:1.8; }
+
+  .lb { position:fixed; inset:0; background:#171613; z-index:50; display:none;
+        overflow:hidden; touch-action:none; }
+  .lb.on { display:block; }
+  .lbtop { position:absolute; top:0; left:0; right:0; padding:14px; text-align:center;
+           font-size:13px; color:#D1AD63; z-index:3; }
+  .lbclose { position:absolute; top:8px; right:12px; z-index:4; font-size:26px;
+             color:#D1AD63; padding:6px 12px; min-width:44px; min-height:44px; line-height:1;cursor:pointer;
+             border:0;background:transparent; }
+  .lbstage { position:absolute; inset:0; display:flex; align-items:center;
+             justify-content:center; overflow:hidden; }
+  .lbstage img { max-width:100%; max-height:100%; width:auto; height:auto;
+                 transform-origin:center center; will-change:transform; }
+  .lbnav { position:absolute; top:50%; transform:translateY(-50%); z-index:3;
+           width:44px; height:44px; border-radius:50%; background:rgba(209,173,99,.18);
+           color:#F4E9D2; font-size:20px; line-height:44px; text-align:center;cursor:pointer;border:0; }
+  .lbnav.prev { left:10px; }
+  .lbnav.next { right:10px; }
+  .lbtip { position:absolute; left:0; right:0; bottom:12px; text-align:center;
+           font-size:11px; color:#B8A984; z-index:3; }
+</style>
+</head>
+<body class="theme-ledger">
+
+<div class="head">
+  <div class="t1"><span class="dk-logo" role="img" aria-label="L'OK SHOW 乐秀"></span><span class="dk-t">酒水单</span></div>
+  <div class="t2" id="upd"></div>
+  <div class="t2">点图片可放大 · 左右滑翻页</div>
+</div>
+
+<div class="wrap" id="wrap"><div class="empty">正在加载…</div></div>
+
+<div class="foot">
+  <div class="note" id="note"></div>
+  <div>价格以店内实际为准</div>
+</div>
+
+<div class="lb" id="lb">
+  <div class="lbtop" id="lbIdx"></div>
+  <button type="button" class="lbclose" id="lbClose" aria-label="关闭大图">✕</button>
+  <div class="lbstage" id="lbStage"><img id="lbImg" alt=""></div>
+  <button type="button" class="lbnav prev" id="lbPrev" aria-label="上一页">‹</button>
+  <button type="button" class="lbnav next" id="lbNext" aria-label="下一页">›</button>
+  <div class="lbtip">左右滑看上一张 / 下一张 · 双指或双击放大 · 拖动看细节</div>
+</div>
+
+<script>
+// 这三个是打开页面时服务器一起带过来的，省掉一次来回
+var SERVER_PAGES = {{ pages|tojson }};
+var SERVER_NOTE = {{ note|tojson }};
+var SERVER_UPDATED = {{ updated_at|tojson }};
+var pages = [], cur = 0;
+var scale = 1, tx = 0, ty = 0;
+var img = document.getElementById('lbImg');
+var lb = document.getElementById('lb');
+var stage = document.getElementById('lbStage');
+var lbTrigger = null;
+
+function apply() {
+  img.style.transform = 'translate(' + tx + 'px,' + ty + 'px) scale(' + scale + ')';
+}
+function resetZoom() { scale = 1; tx = 0; ty = 0; apply(); }
+
+function show(i) {
+  if (!pages.length) return;
+  if (i < 0) i = 0;
+  if (i >= pages.length) i = pages.length - 1;
+  cur = i;
+  resetZoom();
+  img.src = pages[i].url;
+  document.getElementById('lbIdx').textContent =
+    (pages.length > 1) ? ((i + 1) + ' / ' + pages.length) : '';
+  document.getElementById('lbPrev').style.visibility = (pages.length > 1) ? '' : 'hidden';
+  document.getElementById('lbNext').style.visibility = (pages.length > 1) ? '' : 'hidden';
+}
+function openLb(i) {
+  lbTrigger = document.activeElement;
+  show(i); lb.classList.add('on');
+  document.getElementById('lbClose').focus();
+}
+function closeLb() {
+  lb.classList.remove('on'); resetZoom();
+  if (lbTrigger && document.body.contains(lbTrigger)) lbTrigger.focus();
+  lbTrigger = null;
+}
+
+document.getElementById('lbClose').onclick = closeLb;
+document.getElementById('lbPrev').onclick = function () { show(cur - 1); };
+document.getElementById('lbNext').onclick = function () { show(cur + 1); };
+// 点图片以外的黑边关闭；点图片本身不关，避免想放大结果关掉了
+stage.addEventListener('click', function (e) { if (e.target === stage) closeLb(); });
+document.addEventListener('keydown', function (e) {
+  if (!lb.classList.contains('on')) return;
+  if (e.key === 'Escape') closeLb();
+  if (e.key === 'ArrowLeft') show(cur - 1);
+  if (e.key === 'ArrowRight') show(cur + 1);
+});
+
+/* ---- 手势：双指缩放、放大后拖动、左右滑切换、双击放大 ---- */
+var startDist = 0, startScale = 1, sx = 0, sy = 0, orgx = 0, orgy = 0;
+var moved = false, t0 = 0, lastTap = 0;
+
+function dist(t) {
+  var dx = t[0].clientX - t[1].clientX, dy = t[0].clientY - t[1].clientY;
+  return Math.sqrt(dx * dx + dy * dy);
+}
+// 图片放大后拖动别让它飞出屏幕
+function clampPan() {
+  var mx = window.innerWidth * scale / 2, my = window.innerHeight * scale / 2;
+  if (tx > mx) tx = mx; if (tx < -mx) tx = -mx;
+  if (ty > my) ty = my; if (ty < -my) ty = -my;
+}
+stage.addEventListener('touchstart', function (e) {
+  if (e.touches.length === 2) {
+    startDist = dist(e.touches);
+    startScale = scale;
+  } else if (e.touches.length === 1) {
+    sx = orgx = e.touches[0].clientX;
+    sy = orgy = e.touches[0].clientY;
+    moved = false; t0 = Date.now();
+  }
+}, { passive: true });
+
+stage.addEventListener('touchmove', function (e) {
+  e.preventDefault();
+  if (e.touches.length === 2 && startDist) {
+    var d = dist(e.touches);
+    scale = Math.max(1, Math.min(4, startScale * (d / startDist)));
+    if (scale === 1) { tx = 0; ty = 0; }
+    clampPan(); apply();
+    moved = true;
+  } else if (e.touches.length === 1) {
+    var dx = e.touches[0].clientX - sx, dy2 = e.touches[0].clientY - sy;
+    if (Math.abs(dx) > 8 || Math.abs(dy2) > 8) moved = true;
+    if (scale > 1) { tx += dx; ty += dy2; clampPan(); apply(); }
+    sx = e.touches[0].clientX; sy = e.touches[0].clientY;
+  }
+}, { passive: false });
+
+stage.addEventListener('touchend', function (e) {
+  var dt = Date.now() - t0;
+  if (e.touches.length === 0) {
+    // 原图大小时左右滑切页；向左滑看下一张
+    if (scale <= 1 && moved && dt < 900) {
+      var dx = e.changedTouches[0].clientX - orgx;
+      if (Math.abs(dx) > 45) { show(cur + (dx < 0 ? 1 : -1)); return; }
+    }
+    // 双击：两次快速轻点
+    var now = Date.now();
+    if (!moved && dt < 300) {
+      if (now - lastTap < 320) { scale = (scale > 1.2) ? 1 : 2.2; tx = 0; ty = 0; apply(); }
+      lastTap = now;
+    }
+  }
+}, { passive: true });
+img.addEventListener('dblclick', function () {
+  scale = (scale > 1.2) ? 1 : 2.2; tx = 0; ty = 0; apply();
+});
+
+/* ---- 数据：服务器已经把酒单写进页面了，不用再单独请求一次 ---- */
+pages = SERVER_PAGES;
+document.getElementById('upd').textContent =
+  (SERVER_UPDATED ? ('更新于 ' + String(SERVER_UPDATED).slice(0, 16)) : '');
+document.getElementById('note').textContent = SERVER_NOTE || '';
+(function () {
+  var wrap = document.getElementById('wrap');
+  if (!pages.length) {
+    wrap.innerHTML = '<div class="empty">还没有上传酒单<br>请店内在后台添加</div>';
+    return;
+  }
+  // 用创建元素的方式而不是拼 HTML：标题里带引号或标签也只会被当成普通文字，
+  // 不会被浏览器当成代码执行
+  wrap.innerHTML = '';
+  pages.forEach(function (p, i) {
+    var img = document.createElement('img');
+    img.className = 'page';
+    img.tabIndex = 0;
+    img.setAttribute('role', 'button');
+    img.setAttribute('aria-label', (p.title || '酒水单') + '，打开大图');
+    img.src = p.url;
+    img.alt = p.title || '酒水单';
+    if (i > 0) { img.loading = 'lazy'; }   // 第一页马上加载，后面的滑到再加载
+    img.onclick = function () { openLb(i); };
+    img.onkeydown = function (e) {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openLb(i); }
+    };
+    wrap.appendChild(img);
+  });
+})();
+</script>
+</body>
+</html>
