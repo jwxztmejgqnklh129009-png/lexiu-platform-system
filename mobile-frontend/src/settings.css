@@ -1,0 +1,36 @@
+.demo-module-section { margin-top: 24px; }
+.demo-form-popup { width: 100%; max-width: 480px; left: 0 !important; right: 0 !important; margin-inline: auto; max-height: 90dvh; overflow-y: auto; padding: 24px 16px calc(16px + env(safe-area-inset-bottom)); }
+.demo-form-popup > h2 { padding-right: 32px; }
+.demo-form-fields { margin-top: 20px; }
+.demo-form-popup .van-field { padding-inline: 0; }
+.demo-form-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 24px; }
+.demo-form-error { color: var(--error-text); font-size: 14px; line-height: 24px; margin-top: 12px; overflow-wrap: anywhere; }
+.demo-danger.van-button { color: var(--error-text); }
+.demo-account-hint { color: var(--muted); font-size: 14px; line-height: 24px; margin-top: 16px; }
+.demo-password-toggle.van-button { padding: 0; min-width: 44px; min-height: 44px; height: 44px; border: 0; background: transparent; color: var(--muted); }
+.demo-account-group { margin-top: 12px; }
+.demo-auth-page .van-field__error-message { min-height: 24px; }
+.demo-auth-page .van-cell-group { margin-bottom: 24px; }
+.demo-credential-actions { display: flex; flex-wrap: wrap; gap: 12px; margin: 16px 0 24px; }
+.demo-remember-account { min-height: 44px; margin: 0 0 20px; }
+.demo-account-success { color: var(--text); margin-top: 16px; overflow-wrap: anywhere; }
+.drink-admin-group { margin-top: 12px; }
+.drink-admin-thumb { margin-right: 12px; flex-shrink: 0; }
+.drink-admin-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.drink-admin-actions .van-button { padding-inline: 12px; }
+.drink-current-image { margin: 16px 0; }
+.drink-current-image p { font-size: 14px; margin-bottom: 8px; }
+.drink-public-title { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin: 24px 0 12px; }
+.drink-public-title h2 { min-width: 0; overflow-wrap: anywhere; }
+.drink-public-title > span { flex-shrink: 0; font-size: 14px; }
+.drink-public-image { margin-bottom: 16px; }
+.drink-public-image .van-image { display: block; }
+.drink-public-image .van-image__img { height: auto; display: block; }
+.drink-pagination { margin: 20px 0 24px; --van-pagination-height: 44px; --van-pagination-background: var(--surface); --van-pagination-text-color: var(--text); --van-pagination-item-disabled-color: var(--muted); --van-pagination-item-disabled-background: var(--surface); }
+.drink-public-note { margin-top: 24px; white-space: pre-line; overflow-wrap: anywhere; --van-notice-bar-background: var(--surface); --van-notice-bar-text-color: var(--muted); }
+.drink-public-page .menu-heading p { color: var(--muted); font-size: 14px; margin-top: 8px; }
+.drink-image-preview .van-image-preview__cover { top: auto; right: 0; bottom: 0; }
+.drink-preview-actions { display: flex; justify-content: center; gap: 12px; padding: 12px 16px calc(16px + env(safe-area-inset-bottom)); }
+.drink-preview-actions .van-button { flex: 0 1 160px; }
+.drink-preview-next-icon { margin-left: 6px; }
+@media (max-width: 359px) { .drink-admin-actions .van-button { padding-inline: 10px; } }

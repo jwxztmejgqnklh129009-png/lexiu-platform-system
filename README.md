@@ -31,3 +31,6 @@ $env:HOST='127.0.0.1'
 
 公开仓库只用于代码协作。生产部署、备份恢复和账号运维请在受控的私有环境中执行。
 
+## 手机前端演示版
+
+新增的独立目录 [`mobile-frontend/`](mobile-frontend/README.md) 使用 Vue 3、TypeScript 与 Vant，提供员工/管理员及公开酒水单的手机页面演示。它不连接后端，也不替换现有 Flask 页面；运行方式、演示账号和对接边界见其 README。
