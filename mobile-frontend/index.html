@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#F5F6F8" />
+    <script>
+      (() => {
+        let choice = 'auto';
+        try { choice = localStorage.getItem('lexiu-appearance') || 'auto'; } catch {}
+        const dark = choice === 'dark' || (choice !== 'light' && matchMedia('(prefers-color-scheme: dark)').matches);
+        document.documentElement.dataset.theme = dark ? 'dark' : 'light';
+        document.documentElement.style.colorScheme = dark ? 'dark' : 'light';
+        document.querySelector('meta[name="theme-color"]').content = dark ? '#14171D' : '#F5F6F8';
+      })();
+    </script>
+    <style>html { background: #F5F6F8; } html[data-theme="dark"] { background: #14171D; }</style>
+    <link rel="icon" href="./assets/lexiu-brand/favicon.png" />
+    <title>乐秀 · 门店管理</title>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

@@ -1,0 +1,13 @@
+node_modules/
+dist/
+*.local
+.review/
+.env
+.env.*
+!.env.example
+*.log
+*.tsbuildinfo
+coverage/
+.DS_Store
+Thumbs.db
+tests/demo/*-results.json

@@ -1,0 +1,27 @@
+{
+  "name": "lexiu-mobile-frontend",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 127.0.0.1 --port 5190 --strictPort",
+    "typecheck": "vue-tsc --noEmit",
+    "build": "vue-tsc --noEmit && vite build",
+    "preview": "vite preview --host 127.0.0.1 --port 4190 --strictPort",
+    "test:demo": "node scripts/run-demo-tests.mjs"
+  },
+  "dependencies": {
+    "vant": "4.10.2",
+    "vue": "3.5.44",
+    "vue-router": "4.6.3"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "6.0.10",
+    "typescript": "5.9.3",
+    "vite": "8.3.5",
+    "vue-tsc": "3.3.13"
+  },
+  "engines": {
+    "node": "^20.19.0 || >=22.12.0"
+  }
+}
